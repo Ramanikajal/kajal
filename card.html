@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-10">
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-normal mb-0 text-black">Shopping Cart</h3>
+          </div>
+          <div id="arrer"></div>
+          <div class="card rounded-3 mb-4">
+            <div class="card-body p-4">
+              <div class="row d-flex justify-content-between align-items-center" id="usershow">
+              </div>
+            </div>
+          </div>
+          <h3 id="qtyshow"></h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <a href="index.html" class="btn btn-dark my-4">Backe to shopping</a>
+
+      </div>
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+  let userlogin = JSON.parse(localStorage.getItem('userloging'));
+        if (!userlogin) {
+            window.location.href = "login.html";
+        }
+  let addtocard = JSON.parse(localStorage.getItem('product'));
+  view()
+  function view() {
+    let tbl = "";
+    let sum = 0;
+    if (addtocard.length != 0) {
+      for (let i in addtocard) {
+        sum += addtocard[i].qty * addtocard[i].price;
+        tbl += `
+        <div class="col-md-2 col-lg-2 col-xl-2">
+                <img
+                  src="${addtocard[i].images}"
+                  class="img-fluid rounded-3" alt="Cotton T-shirt">
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-3">
+                <p class="lead fw-normal mb-2">${addtocard[i].name}</p>
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                <button class="btn btn-link px-2"
+                    onclick="dataclearsum(${addtocard[i].id})">
+                    <i class="fas fa-minus"></i>
+                  </button>
+
+                  <input  min="0" name="quantity" id="qty_${addtocard[i].id}" value="${addtocard[i].qty}" type="number" class="form-control form-control-sm" />
+                  
+                  <button class="btn btn-link px-2"
+                    onclick="datasum(${addtocard[i].id})">
+                    <i class="fas fa-plus"></i>
+                  </button>
+              </div>
+            
+              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                <h5 class="mb-0" id="show">${addtocard[i].price}$</h5>
+              </div>
+              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                <a href="#!" class="text-danger"  onclick="deletdata(${addtocard[i].id})"><i class="fas fa-trash fa-lg"></i></a>
+              </div>
+        `
+      }
+    } else {
+      tbl = ""
+    }
+    document.getElementById('usershow').innerHTML = tbl;
+    document.getElementById('show').innerHTML = sum + "$";
+    document.getElementById('qtyshow').innerHTML = "Total = " + sum + "$";
+  }
+  function deletdata(id) {
+    for (let i in addtocard) {
+      if (addtocard[i].id == id) {
+        addtocard.splice(i, 1)
+      }
+    }
+    localStorage.setItem('product', JSON.stringify(addtocard));
+    view();
+  }
+  function datasum(id) {
+    for (let i in addtocard) {
+      if (addtocard[i].id == id) {
+        addtocard[i].qty++
+        localStorage.setItem('product', JSON.stringify(addtocard));
+        view();
+      }
+    }
+  }
+  function dataclearsum(id) {
+    for (let i in addtocard) {
+      if (addtocard[i].id == id) {
+        if (addtocard[i].qty > 0) {
+          addtocard[i].qty--
+          localStorage.setItem('product', JSON.stringify(addtocard));
+          view();
+        }
+        if (addtocard[i].qty == 0) {
+          alert("0 input is not valid or your oder is delete !");
+          deletdata(id)
+          localStorage.setItem('product', JSON.stringify(addtocard));
+          view();
+        }
+      }
+
+    }
+  }
+
+</script>
+
+</html>
