@@ -1,0 +1,3 @@
+export const ADDMEDICEN = "ADDMEDICEN";
+export const DELETMEDICEN = "DELETMEDICEN";
+export const EDITMEDICEN = "EDITMEDICEN";
