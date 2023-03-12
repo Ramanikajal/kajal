@@ -30,12 +30,12 @@ const Navbar = (props) => {
                     </button>
                     <div className="collapse navbar-collapse" >
                         <ul className="navbar-nav m-auto">
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <Link to='/' className="nav-link active" >Home</Link>
-                            </li>
-                            <li className="nav-item">
+                            </li> */}
+                            {/* <li className="nav-item">
                                 <Link to='/Medisin' className="nav-link active" >Medisin</Link>
-                            </li>
+                            </li> */}
 
                             {JSON.parse(localStorage.getItem('login'))?.role === 'admin'? <li className="nav-item">
                                 <Link to='/Doctor' className="nav-link" >Doctor</Link>

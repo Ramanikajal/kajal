@@ -14,173 +14,176 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import { useSelector,useDispatch } from 'react-redux';
-import{addMedicedatare} from"../redux/action";
+import{addMedicines} from"../redux/action";
 
 function Home(props) {
     // const data = useSelector((state) => state.addMedicedatare.data)
-    const dispatch = useDispatch()
-    const [open, setOpen] = React.useState(false);
-    const [tdata, setTdata] = useState([]);
-    const [Update, setUpdate] = useState();
-    const [dopen, setDopen] = React.useState(false);
-    const [did, setDid] = useState()
-    const [uid, setUid] = useState()
-    // const Counter = useSelector(state =>state.Counter)
+      const tdata = useSelector((state) => state.tasksreducer.tdata)
+      const [open, setOpen] = React.useState(false);
+      const [data, setData] = useState([]);
+      const [Update, setUpdate] = useState();
+      const [dopen, setDopen] = React.useState(false);
+      const [did, setDid] = useState()
+      const [uid, setUid] = useState()
+    //   const Counter = useSelector(state =>state.Counter)
+    //   const data = useSelector((data) => data.admin.Appdata)
+    
+      const dispatch = useDispatch();
 
+  
+      const handleClickDopen = (id) => {
+          setDopen(true);
+          setDid(id);
+      };
+  
+      const handleClickOpen = () => {
+          setOpen(true);
+          setUpdate()
+      };
+  
+      const handleClose = () => {
+          setOpen(false);
+          setUpdate()
+          setDopen()
+          formik.resetForm();
+      };
+  
+  
+      let tasks = {
+          name: yup.string().required('please enter name'),
+          date: yup.string().required('please enter date'),
+          fild: yup.string().required('please enter fild'),
+          experience: yup.string().required('please enter experience'),
+      }
+  
+  
+      let schema = yup.object().shape(tasks);
+  
+      const formik = useFormik({
+          initialValues: {
+              name: '',
+              date: '',
+              fild: '',
+              experience: ''
+          },
+          validationSchema: schema,
+          onSubmit: values => {
+              if (Update) {
+                  handleupdate(values)
+              } else {
+                  handleSubmitdata(values)
+              }
+          }
+      })
+  
+      const handleupdate = (values) => {
+          let localdata = JSON.parse(localStorage.getItem("tasks"));
+  
+          let udata = localdata.map((l, i) => {
+              if (l.id === uid) {
+                  return { id: uid, ...values };
+              } else {
+                  return l;
+              }
+          })
+          console.log(udata);
+  
+          localStorage.setItem("tasks", JSON.stringify(udata))
+          setOpen(false)
+          setUpdate(false)
+          loadData()
+      }
+  
+      const handleSubmitdata = (values) => {
+        //   let localdata = JSON.parse(localStorage.getItem("tasks"));
+  
+          let tdata = {
+              id: Math.floor(Math.random() * 1000),
+              ...values
+          }
+          dispatch(addMedicines(tdata))
+        //   if (localdata === null) {
+        //       localStorage.setItem("tasks", JSON.stringify([data]))
+        //   } else {
+        //       localdata.push(data)
+        //       localStorage.setItem("tasks", JSON.stringify(localdata))
+        //   }
+  
+          setOpen(false);
+          loadData()
+  
+      }
+  
+  
+      const loadData = () => {
+          let localData = JSON.parse(localStorage.getItem("tasks"))
+  
+          if (localData !== null) {
+              setData(localData)
+          }
+      }
+  
+      useEffect(
+          () => {
+              loadData()
+          },
+          [])
+  
+      const columns = [
+          // { field: 'id', headerName: 'Id', width: 130 },
+          { field: 'name', headerName: 'Name', width: 130 },
+          { field: 'date', headerName: ' date', width: 130 },
+          { field: 'fild', headerName: 'fild', width: 130 },
+          { field: 'experience', headerName: 'experience', width: 130 },
+          {
+              field: 'delete', headerName: 'Delete', width: 130,
+              renderCell: (params) => (
+                  <>
+                      <IconButton aria-label="delete" onClick={() => handleClickDopen(params.row.id)}>
+                          <DeleteIcon />
+                      </IconButton>
+                  </>
+              )
+          },
+          {
+              field: 'edit', headerName: 'Edit', width: 130,
+              renderCell: (params) => (
+                  <>
+                      <IconButton aria-label="edit" onClick={() => handleEdit(params)}>
+                          <CreateIcon />
+                      </IconButton>
+                  </>
+              )
+          }
+      ];
+  
+  
+  
+      const handleEdit = (params) => {
+          setOpen(true);
+          //console.log(params.row);
+          setUid(params.row.id)
+          setUpdate(true)
+          console.log(params.row.id)
+          formik.setValues({
+              name: params.row.name,
+              date: params.row.date,
+              fild: params.row.fild,
+              experience: params.row.experience,
+          });
+      }
+  
+      const handleDelete = () => {
+          let localData = JSON.parse(localStorage.getItem("tasks"))
+  
+          let filterData = localData.filter((v, i) => v.id !== did);
+  
+          localStorage.setItem("tasks", JSON.stringify(filterData));
+          loadData()
+          setDopen(false)
+      }
+  
 
-    const handleClickDopen = (id) => {
-        setDopen(true);
-        setDid(id);
-    };
-
-    const handleClickOpen = () => {
-        setOpen(true);
-        setUpdate()
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-        setUpdate()
-        setDopen()
-        formik.resetForm();
-    };
-
-
-    let tasks = {
-        name: yup.string().required('please enter name'),
-        date: yup.string().required('please enter date'),
-        fild: yup.string().required('please enter fild'),
-        experience: yup.string().required('please enter experience'),
-    }
-
-
-    let schema = yup.object().shape(tasks);
-
-    const formik = useFormik({
-        initialValues: {
-            name: '',
-            date: '',
-            fild: '',
-            experience: ''
-        },
-        validationSchema: schema,
-        onSubmit: values => {
-            if (Update) {
-                handleupdate(values)
-            } else {
-                handleSubmitdata(values)
-            }
-        }
-    })
-
-    const handleupdate = (values) => {
-        let localdata = JSON.parse(localStorage.getItem("tasks"));
-
-        let udata = localdata.map((l, i) => {
-            if (l.id === uid) {
-                return { id: uid, ...values };
-            } else {
-                return l;
-            }
-        })
-        console.log(udata);
-
-        localStorage.setItem("tasks", JSON.stringify(udata))
-        setOpen(false)
-        setUpdate(false)
-        loadData()
-    }
-
-    const handleSubmitdata = (tdata) => {
-        console.log(tdata);
-
-        // let localdata = JSON.parse(localStorage.getItem("tasks"));
-
-        // let tdata = {
-        //     id: Math.floor(Math.random() * 1000),
-        //     ...values
-        // }
-
-        // if (localdata === null) {
-        //     localStorage.setItem("tasks", JSON.stringify([tdata]))
-        // } else {
-        //     localdata.push(tdata)
-        //     localStorage.setItem("tasks", JSON.stringify(localdata))
-        // }
-        dispatch(addmedicendata(formik))
-        setOpen(false);
-        loadData()
-
-    }
-
-
-    const loadData = () => {
-        let localData = JSON.parse(localStorage.getItem("tasks"))
-
-        if (localData !== null) {
-            setTdata(localData)
-        }
-    }
-
-    useEffect(
-        () => {
-            loadData()
-        },
-        [])
-
-    const columns = [
-        // { field: 'id', headerName: 'Id', width: 130 },
-        { field: 'name', headerName: 'Name', width: 130 },
-        { field: 'date', headerName: ' date', width: 130 },
-        { field: 'fild', headerName: 'fild', width: 130 },
-        { field: 'experience', headerName: 'experience', width: 130 },
-        {
-            field: 'delete', headerName: 'Delete', width: 130,
-            renderCell: (params) => (
-                <>
-                    <IconButton aria-label="delete" onClick={() => handleClickDopen(params.row.id)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </>
-            )
-        },
-        {
-            field: 'edit', headerName: 'Edit', width: 130,
-            renderCell: (params) => (
-                <>
-                    <IconButton aria-label="edit" onClick={() => handleEdit(params)}>
-                        <CreateIcon />
-                    </IconButton>
-                </>
-            )
-        }
-    ];
-
-
-
-    const handleEdit = (params) => {
-        setOpen(true);
-        //console.log(params.row);
-        setUid(params.row.id)
-        setUpdate(true)
-        console.log(params.row.id)
-        formik.setValues({
-            name: params.row.name,
-            date: params.row.date,
-            fild: params.row.fild,
-            experience: params.row.experience,
-        });
-    }
-
-    const handleDelete = () => {
-        let localData = JSON.parse(localStorage.getItem("tasks"))
-
-        let filterData = localData.filter((v, i) => v.id !== did);
-
-        localStorage.setItem("tasks", JSON.stringify(filterData));
-        loadData()
-        setDopen(false)
-    }
   return (
     <div>
       
@@ -196,7 +199,7 @@ function Home(props) {
                     </center>
                     <div style={{ height: 400, width: '100%' }}>
                         <DataGrid
-                            rows={tdata}
+                            rows={data}
                             columns={columns}
                             pageSize={5}
                             rowsPerPageOptions={[5]}

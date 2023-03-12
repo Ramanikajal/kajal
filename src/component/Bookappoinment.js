@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+// import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { useDispatch } from "react-redux";
 const Bookappoinment = () => {
-
+  const dispatch = useDispatch()
 const navigate = useNavigate()
 
   const submitHandler = (e) =>{
@@ -15,6 +15,8 @@ const navigate = useNavigate()
       date:e.target.date.value,
       msg:e.target.msg.value
     }
+    // dispatch({ type: "ADDMEDICINE", payload: data });
+    navigate('/list')
           if (localStorage.getItem('productdata')) {
             const data = JSON.parse(localStorage.getItem('productdata'));
             data.push(doctor);

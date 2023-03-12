@@ -1,3 +1,4 @@
-export const ADDMEDICEN = "ADDMEDICEN";
+// export const ADDMEDICEN = "ADDMEDICEN";
 export const DELETMEDICEN = "DELETMEDICEN";
 export const EDITMEDICEN = "EDITMEDICEN";
+export const ADDMEDICINE = "ADDMEDICINE";
